@@ -1,5 +1,6 @@
 import Exercise5 as Ex5
 from bitarray import bitarray
+import pycrc
 
 
 """ A) i)
@@ -77,7 +78,7 @@ def decode(text):
     return decoded_bits
 
 
-def main():
+def repetition_code_bsc():
     loops = 0
     media = 0
     file = open("./TestFilesCD/alice29.txt", "r", encoding="ISO-8859-1")
@@ -92,6 +93,18 @@ def main():
     print("N of total bits = ", len(dec_text.to01()))
     print("N of different bits = ", counter)
     print(media / loops)
+
+
+def hamming_coding_encoding_bsc():
+    print("hamming")
+    encoder = pycrc.hamming.Hamming74.encode('1010')
+    print(encoder)
+    encoder.encode()
+
+
+def main():
+    # repetition_code_bsc()
+    hamming_coding_encoding_bsc()
 
 
 if __name__ == "__main__":

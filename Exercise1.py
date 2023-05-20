@@ -1,5 +1,6 @@
 import Exercise5 as Ex5
 from bitarray import bitarray
+
 import pycrc
 
 

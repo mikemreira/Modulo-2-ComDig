@@ -13,6 +13,7 @@ class FletcherChecksumStr:
         sum1, sum2 = int(), int()
         data = data.encode()
         for index in range(len(data)):
+            print(chr(data[index]))
             sum1 = (sum1 + data[index]) % 255
             sum2 = (sum2 + sum1) % 255
         result = (sum2 << 8) | sum1

@@ -13,15 +13,32 @@ def geometric_progression(n, u, r):
     return arr
 
 
+# 2) b)
+'''
 while 1:
-    time.sleep(3)
+    time.sleep(10)
     receivedStr, fletcher_sum = arduino.readline().rstrip().decode().split(",")
     print(receivedStr)
-    my_sum = fletcher.FletcherChecksumStr.get_fletcher16(str(int(receivedStr) + 1))['Fletcher16_dec']
+    my_sum = fletcher.FletcherChecksumStr.get_fletcher16(str(int(receivedStr)))['Fletcher16_dec']
     print(my_sum)
     print("FLETCHER", fletcher_sum)
     if int(my_sum) == int(fletcher_sum):
         print("SUCCESS NO ERRORS")
     else:
         print("Errors")
-
+'''
+# 2) c)
+while 1:
+    time.sleep(10)
+    receivedStr, fletcher_sum = arduino.readline().rstrip().decode().split(",")
+    print("RECEIVED", receivedStr)
+    mutatedStr = str(receivedStr).replace("739", "658")
+    print("MUTATED", mutatedStr)
+    my_sum = fletcher.FletcherChecksumStr.get_fletcher16(mutatedStr)['Fletcher16_dec']
+    print(my_sum)
+    print("FLETCHER", fletcher_sum)
+    if int(my_sum) == int(fletcher_sum):
+        print("SUCCESS NO ERRORS")
+    else:
+        print("Errors")
+    time.sleep(1000)

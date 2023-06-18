@@ -58,6 +58,45 @@ import pycrc
 
 """
 
+def encodeHamming(message):
+    # Verify message length
+    if len(message) != 4:
+        raise ValueError("El mensaje binario debe tener una longitud de 4 bits.")
+
+    # Calculate bits p1, p2 and p4
+    p1 = message[0] ^ message[1] ^ message[3]
+    p2 = message[0] ^ message[2] ^ message[3]
+    p4 = message[1] ^ message[2] ^ message[3]
+
+    # Assemble the encoded message with the p bits and the message bits
+    encoded_message = [p1, p2, message[0], p4, message[1], message[2], message[3]]
+
+    return encoded_message
+
+
+def decodeHamming(encoded_message):
+    # Verify encoded_message length
+    if len(encoded_message) != 7:
+        raise ValueError("El mensaje codificado debe tener una longitud de 7 bits.")
+
+    # Calculate bits p1, p2 and p4
+    p1 = encoded_message[0] ^ encoded_message[2] ^ encoded_message[4] ^ encoded_message[6]
+    p2 = encoded_message[1] ^ encoded_message[2] ^ encoded_message[5] ^ encoded_message[6]
+    p4 = encoded_message[3] ^ encoded_message[4] ^ encoded_message[5] ^ encoded_message[6]
+
+    # Check if there is any error and correct it
+    error_bit = p4 * 4 + p2 * 2 + p1
+    if error_bit != 0:
+        #print("An error has been found in bit:", error_bit)
+        # Correct the wrong bit
+        encoded_message[error_bit - 1] = 1 - encoded_message[error_bit - 1]
+
+    # Decode the message
+    decoded_message = [encoded_message[2], encoded_message[4], encoded_message[5], encoded_message[6]]
+
+    return decoded_message
+
+
 d = {'1': bitarray('111'), '0': bitarray('000')}
 
 
@@ -83,7 +122,7 @@ def repetition_code_bsc():
     media = 0
     file = open("./TestFilesCD/alice29.txt", "r", encoding="ISO-8859-1")
     text = Ex5.to_binary(file.read()).replace(" ", "")
-    while loops < 1:
+    while loops < 5:
         enc_text = encode(text)
         interference = Ex5.bsc(enc_text, 0.001)
         dec_text = decode(interference)
@@ -95,16 +134,39 @@ def repetition_code_bsc():
     print(media / loops)
 
 
-def hamming_coding_encoding_bsc():
-    print("hamming")
-    encoder = pycrc.hamming.Hamming74.encode('1010')
-    print(encoder)
-    encoder.encode()
+def hamming_coding_encoding_bsc(errorProbability):
+    file = open("./TestFilesCD/alice29.txt", "r", encoding="ISO-8859-1")
+    text = Ex5.to_binary(file.read()).replace(" ", "")
+    enc_text = bitarray()  # here you append the parts of the encoding
+    dec_text = bitarray()  # here you append the parts of the decoding
+    i = 0
+    message = bitarray()
+    while i < len(text):
+        message = [int(text[i]), int(text[i+1]), int(text[i+2]), int(text[i+3])]
+        chunk_to_encode = encodeHamming(message)
+        for j in range(0, 7):  # the encoding has 7 bits
+            enc_text.append(chunk_to_encode[j])
+        i += 4
+    interference = Ex5.bsc(enc_text, errorProbability)
+    i = 0
+    encoded_interference = bitarray()
+    while i < len(interference):
+        encoded_interference = [int(interference[i]), int(interference[i+1]), int(interference[i+2]), int(interference[i+3]), int(interference[i+4]), int(interference[i+5]), int(interference[i+6])]
+        chunk_to_decode = decodeHamming(encoded_interference)
+        for j in range(0, 4):
+            dec_text.append(chunk_to_decode[j])
+        i += 7
+    media, counter = Ex5.ber_calculator(str(text), str(dec_text.to01()))
+    file.close()
+    print("N of total bits = ", len(dec_text.to01()))
+    print("N of different bits = ", counter)
+    print("Bit Error Rate = ", media)
+    return media
 
 
 def main():
     # repetition_code_bsc()
-    hamming_coding_encoding_bsc()
+    hamming_coding_encoding_bsc(0.01)
 
 
 if __name__ == "__main__":

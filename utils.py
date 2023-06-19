@@ -8,7 +8,7 @@ def bsc_with_interleaving(text, ber_value, rows, columns):
 
 
 def model_bsc(text, ber_value):
-    file_content_binary = to_binary(text)
+    file_content_binary = chars_to_binary(text)
     interference = bsc(file_content_binary, ber_value)
     print()
     print("real BER  -> " + str(ber_calculator(file_content_binary, interference)))
@@ -21,7 +21,20 @@ def to_char(binary_string):
     return ''.join([chr(int(binary, 2)) for binary in binary_list])
 
 
-def to_binary(text):
+def binary_to_chars(binary_text):
+    # Split the binary text into 8-bit chunks
+    binary_chunks = [binary_text[i:i + 8] for i in range(0, len(binary_text), 8)]
+
+    # Convert each binary chunk to decimal and then to characters
+    chars = [chr(int(chunk, 2)) for chunk in binary_chunks]
+
+    # Join the characters to form a string
+    result = ''.join(chars)
+
+    return result
+
+
+def chars_to_binary(text):
     return ' '.join(format(ord(x), 'b').zfill(8) for x in text)
 
 
@@ -56,19 +69,20 @@ def invert_value(x):
 
 
 def interleave(input_sequence, num_rows, num_cols):
-
     matrix_size = num_rows * num_cols
 
-    interleaving_matrix = [[None for j in range(num_cols)] for i in range(num_rows)]
+    interleaved = [[''] * num_cols for _ in range(num_rows)]
+    index = 0
 
-    for i in range(len(input_sequence)):
-        row = i % num_rows
-        col = i // num_rows
-        interleaving_matrix[row][col] = input_sequence[i]
+    for r in range(num_rows):
+        for c in range(num_cols):
+            if index < len(input_sequence):
+                interleaved[r][c] = input_sequence[index];
+                index += 1
 
     output_sequence = ""
 
-    for i in interleaving_matrix:
+    for i in interleaved:
         for x in i:
             output_sequence += str(x)
 
@@ -78,7 +92,7 @@ def interleave(input_sequence, num_rows, num_cols):
 def main():
     file = open("./TestFilesCD/a.txt", "r")
     file_content = file.read()
-    file_content_binary = to_binary(file_content)
+    file_content_binary = chars_to_binary(file_content)
     ber = 0.7
     interference = model_bsc(file_content, ber)
 

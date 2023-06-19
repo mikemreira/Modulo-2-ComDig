@@ -214,18 +214,14 @@ def main():
     ber = 0.001
     matrix_rows = 10000
     matrix_cols = 1000
-    """
     print("\n No error control : ")
     simple_bsc(path, ber)
     print("\n Repetition : ")
     repetition_code_bsc(path, ber)
-    """
     print("\n Repetition with Interleaved : ")
     repetition_code_bsc_with_interleaving(path, ber, matrix_rows, matrix_cols)
-    """
     print("\n Hamming : ")
     hamming_coding_encoding_bsc(path, ber)
-    """
     print("\n Hamming Interleaved : ")
     hamming_coding_encoding_bsc_with_interleaving(path, ber, matrix_rows, matrix_cols)
 

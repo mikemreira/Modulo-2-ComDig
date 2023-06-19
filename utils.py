@@ -101,7 +101,6 @@ def main():
     print("ber with 8 375 matrix")
     bsc_with_interleaving(file_content, ber, 8, 375)
 
-
     """
     inter2 = interleave(text, 1, 128)
     print("interleaving 1 128")
@@ -115,6 +114,7 @@ def main():
     print("value returned -> " + bsc_with_interleaving(file_content, ber, 5, columns))
     print("value expected -> " + interleave(inter, columns, 5))
     """
+
 
 if __name__ == "__main__":
     main()

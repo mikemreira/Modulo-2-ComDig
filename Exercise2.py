@@ -1,32 +1,32 @@
 import serial
-import array
 import time
 import FletcherChecksumLib as fletcher
 
 arduino = serial.Serial(port='/dev/cu.usbserial-10', baudrate=9600, timeout=3)
 
-
-def geometric_progression(n, u, r):
-    arr = array.array("f", (0 for _ in range(0, n)))
-    for i in range(0, n):
-        arr[i] = (u * r) ** i
-    return arr
-
+'''
+# 2) a)
+while 1:
+    time.sleep(3)
+    receivedStr = arduino.readline().rstrip().decode('utf-8')
+    print(receivedStr)
+    '''
 
 # 2) b)
 '''
 while 1:
     time.sleep(10)
     receivedStr, fletcher_sum = arduino.readline().rstrip().decode().split(",")
-    print(receivedStr)
-    my_sum = fletcher.FletcherChecksumStr.get_fletcher16(str(int(receivedStr)))['Fletcher16_dec']
-    print(my_sum)
-    print("FLETCHER", fletcher_sum)
+    my_sum = fletcher.FletcherChecksumStr.get_fletcher16(str(int(receivedStr) ^ 0x01))['Fletcher16_dec']
+    print("Fletcher calculated in Python = ", my_sum)
+    print("Fletcher received from Arduino = ", fletcher_sum)
     if int(my_sum) == int(fletcher_sum):
-        print("SUCCESS NO ERRORS")
+        print("Success no errors")
     else:
         print("Errors")
 '''
+
+
 # 2) c)
 while 1:
     time.sleep(10)
@@ -41,4 +41,4 @@ while 1:
         print("SUCCESS NO ERRORS")
     else:
         print("Errors")
-    time.sleep(1000)
+
